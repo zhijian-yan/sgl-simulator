@@ -14,6 +14,7 @@ static sgl_screen_t scr;
 static uint16_t buffer[HOR_RES * VER_RES];
 static void sgl_paint(sgl_screen_t *scr);
 static int fps;
+static int need_refresh;
 
 static Uint32 timer_fps_callback(Uint32 interval, void *param) {
     fps = sgl_get_fcount(&scr);
@@ -22,7 +23,7 @@ static Uint32 timer_fps_callback(Uint32 interval, void *param) {
 }
 
 static Uint32 timer_user_callback(Uint32 interval, void *param) {
-    sgl_handler(&scr);
+    need_refresh = 1;
     return interval;
 }
 
@@ -60,6 +61,10 @@ int main(int argc, char *argv[]) {
                 running = 0;
                 break;
             }
+        }
+        if(need_refresh) {
+            need_refresh = 0;
+            sgl_handler(&scr);
         }
         SDL_Delay(1);
     }
